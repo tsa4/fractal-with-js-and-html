@@ -1,3 +1,5 @@
+let maxIterations = 1000;
+let maxIterationsLocation;
 let gl;
 let program;
 let offsetLocation;
@@ -16,6 +18,7 @@ const fragmentShaderSource = `
     uniform vec2 uResolution;
     uniform vec2 uOffset;
     uniform float uZoom;
+    uniform int uMaxIterations;
 
     void main() {
         vec2 uv = gl_FragCoord.xy / uResolution.xy;
@@ -23,17 +26,17 @@ const fragmentShaderSource = `
 
         vec2 z = c;
         int iteration;
-        const int MAX_ITERATIONS = 1000;
         float escapeRadius = 4.0;
         float color = 0.0;
 
-        for (int i = 0; i < MAX_ITERATIONS; i++) {
+        for (int i = 0; i < 10000; i++) {
+            if (i >= uMaxIterations) break;
             if (dot(z, z) > escapeRadius) break;
             z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
             iteration = i;
         }
 
-        color = float(iteration) / float(MAX_ITERATIONS);
+        color = float(iteration) / float(uMaxIterations);
         gl_FragColor = vec4(vec3(color), 1.0);
     }
 `;
@@ -62,6 +65,7 @@ function initWebGL() {
     offsetLocation = gl.getUniformLocation(program, 'uOffset');
     zoomLocation = gl.getUniformLocation(program, 'uZoom');
     resolutionLocation = gl.getUniformLocation(program, 'uResolution');
+    maxIterationsLocation = gl.getUniformLocation(program, 'uMaxIterations');
 }
 
 function createShaderProgram(vsSource, fsSource) {
@@ -99,6 +103,7 @@ function drawScene(offset, zoom) {
     gl.uniform2f(offsetLocation, offset[0], offset[1]);
     gl.uniform1f(zoomLocation, zoom);
     gl.uniform2f(resolutionLocation, gl.canvas.width, gl.canvas.height);
+    gl.uniform1i(maxIterationsLocation, maxIterations);
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -154,7 +159,10 @@ window.onload = function() {
     initWebGL();
     resizeCanvas();
     drawScene(offset, zoom);
-
+    
+    const iterationsInput = document.getElementById('iterations');
+    iterationsInput.addEventListener('change', handleIterationsChange);
+};
     window.addEventListener('resize', function() {
         resizeCanvas();
         drawScene(offset, zoom);
@@ -165,3 +173,11 @@ window.onload = function() {
     gl.canvas.addEventListener('mouseup', handleMouseUp);
     gl.canvas.addEventListener('wheel', handleWheel);
 };
+
+function handleIterationsChange() {
+    const iterationsInput = document.getElementById('iterations');
+    const iterationsValue = document.getElementById('iterationsValue');
+    maxIterations = parseInt(iterationsInput.value);
+    iterationsValue.textContent = maxIterations;
+    drawScene(offset, zoom);
+}
