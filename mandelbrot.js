@@ -23,7 +23,7 @@ const fragmentShaderSource = `
 
         vec2 z = c;
         int iteration;
-        const int MAX_ITERATIONS = 250;
+        const int MAX_ITERATIONS = 100;
         float escapeRadius = 4.0;
         float color = 0.0;
 
