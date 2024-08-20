@@ -119,7 +119,7 @@ function resizeCanvas() {
 }
 
 let offset = [0, 0];
-let zoom = 2;
+let zoom = .5;
 let isDragging = false;
 let lastMousePosition = [0, 0];
 
