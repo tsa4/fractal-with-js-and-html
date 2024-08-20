@@ -7,10 +7,23 @@
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { width: 100%; height: 100%; }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <canvas id="glCanvas"></canvas>
+    <div id="controls">
+        <label for="iterations">Max Iterations:</label>
+        <input type="number" id="iterations" step="100" min="100" value="1000">
+        <span id="iterationsValue">1000</span>
+    </div>
     <script src="mandelbrot.js"></script>
 </body>
 </html>
