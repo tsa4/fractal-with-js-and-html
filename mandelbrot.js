@@ -19,7 +19,7 @@ const fragmentShaderSource = `
 
     void main() {
         vec2 uv = gl_FragCoord.xy / uResolution.xy;
-        vec2 c = (uv * 2.0 - 1.0) / uZoom + uOffset;
+        vec2 c = (gl_FragCoord.xy * 2.0 - uResolution.xy) / uResolution.y / uZoom + uOffset;
 
         vec2 z = c;
         int iteration;
